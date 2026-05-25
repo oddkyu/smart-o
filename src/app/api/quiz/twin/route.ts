@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getOrGenerateAIResponse } from "@/lib/ai_gateway";
 
 export async function POST(request: Request) {
   try {
@@ -50,53 +51,13 @@ export async function POST(request: Request) {
       });
     }
 
-const prompt = `원본 오답 데이터(Grammar Node: ${grammarNodeId}): ${JSON.stringify(originalNotes)}
+    const prompt = `원본 오답 데이터(Grammar Node: ${grammarNodeId}): ${JSON.stringify(originalNotes)}
 위 문제의 출제 의도와 문법 구조를 완벽히 복제한 '새로운 토익 객관식 문제 3개'를 만들어줘.
 반드시 아래 JSON 스키마를 따르는 순수 JSON 배열만 반환해:
 [{"question": "빈칸 포함 문제문장","options": ["① 보기1", "② 보기2", "③ 보기3", "④ 보기4"],"correct_answer": 1,"translation": "문제의 빈칸을 정답으로 채워 완성된 문장을 자연스럽게 한글로 번역","explanation": "정답인 이유 짧게 1문장"}]`;
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-
-    const response = await fetch(geminiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              { text: prompt }
-            ]
-          }
-        ],
-        generationConfig: {
-          responseMimeType: "application/json",
-          temperature: 0.7
-        }
-      })
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Gemini API Error:", errorText);
-      throw new Error(`Gemini API Error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    if (!generatedText) {
-      throw new Error("Gemini API가 유효한 텍스트를 반환하지 않았습니다.");
-    }
-
-    let parsedResult;
-    try {
-      parsedResult = JSON.parse(generatedText.trim());
-    } catch (e) {
-      console.error("JSON Parsing Error:", generatedText);
-      throw new Error("반환된 데이터가 올바른 JSON 형식이 아닙니다.");
-    }
+    const noteId = originalNotes[0]?.id || `unknown-${Date.now()}`;
+    const parsedResult = await getOrGenerateAIResponse(noteId, "TWIN_QUIZ", prompt);
 
     return NextResponse.json({
       success: true,

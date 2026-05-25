@@ -1,4 +1,5 @@
-export type UserRole = "student" | "teacher" | "admin";
+export type UserRole = "student" | "teacher" | "admin" | "parent";
+export type AppMode = "teen" | "toeic";
 
 export interface Academy {
   id: string;
@@ -11,6 +12,8 @@ export interface Class {
   id: string;
   academy_id: string;
   name: string;
+  teacher_id: string | null;
+  class_code: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -21,6 +24,9 @@ export interface User {
   academy_id: string | null;
   name: string | null;
   email: string | null;
+  app_mode: AppMode | null;
+  parent_id: string | null;
+  class_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -73,6 +79,14 @@ export interface GrammarTreeNode {
   created_at: string;
 }
 
+export interface CachedAIResponse {
+  id: number;
+  word_id: string;
+  response_type: string;
+  response_text: any;
+  created_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -105,6 +119,11 @@ export interface Database {
         Row: GrammarTreeNode;
         Insert: Omit<GrammarTreeNode, "created_at">;
         Update: Partial<Omit<GrammarTreeNode, "created_at">>;
+      };
+      cached_ai_responses: {
+        Row: CachedAIResponse;
+        Insert: Omit<CachedAIResponse, "id" | "created_at">;
+        Update: Partial<Omit<CachedAIResponse, "id" | "created_at">>;
       };
     };
   };
