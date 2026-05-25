@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary-cyan: #00F2FE;
+  --color-primary-purple: #4FACFE;
+  
+  --animate-fade-in: fadeIn 1s ease-out forwards;
+  
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(15px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+}
+
+:root {
+  --background: #0B0F19; /* 깊은 미드나잇 블랙 */
+  --foreground: #F8FAFC; /* 눈이 편안한 밝은 슬레이트 텍스트 */
+}
+
+body {
+  color: var(--foreground);
+  background-color: var(--background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer utilities {
+  /* 프리미엄 글래스모피즘 패널 (컨테이너용) */
+  .glass-panel {
+    background-color: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border-radius: 1.5rem;
+  }
+  
+  /* 마우스 오버 시 상호작용하는 글래스 카드 (단어장/문제용) */
+  .glass-card {
+    background-color: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .glass-card:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+  
+  /* 사이버펑크 감성의 은은한 텍스트 후광 효과 */
+  .text-glow {
+    text-shadow: 0 0 25px rgba(0, 242, 254, 0.45);
+  }
+}
